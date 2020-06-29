@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 
-	"go_user_rpc/helper"
+	myHelper "github.com/livegoplayer/go_helper"
 )
 
 //手动实现一个mysql_writer,作为输出流对象传递到log
@@ -41,7 +41,7 @@ func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
 	err = nil
 
 	//解析出level_no
-	levelNo := helper.GetJsonVal(p, "levelNo")
+	levelNo := myHelper.GetJsonVal(p, "levelNo")
 
 	//开启事务
 	tx, err := mw.DbConnection.Begin()
