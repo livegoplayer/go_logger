@@ -8,7 +8,7 @@ import (
 )
 
 //获取gin专用的access log文件输入
-func getGinAccessFileLogger() gin.HandlerFunc {
+func GetGinAccessFileLogger() gin.HandlerFunc {
 	logPath := "../log"
 	accessLogFileName := "access.log"
 	if !myhelper.Exists(myhelper.PathToCommon(logPath)) {
