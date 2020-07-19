@@ -4,7 +4,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var ltype logType
 var Logger *logrus.Logger
 
 //主动log的一些方法
@@ -58,17 +57,14 @@ func Trace(message string) {
 }
 
 func GetLogger() *logrus.Logger {
-	if ltype == Config.LType && Logger != nil {
-		return Logger
-	}
-	switch Config.LType {
-	case CONSOLE:
-		Logger = getConsoleLogger()
-	case MYSQL:
-		Logger = getMysqlLogger()
-	case FILE:
-		Logger = GetFileLog()
+	if Logger == nil {
+		return logrus.New()
 	}
 
 	return Logger
+}
+
+//设置默认的logger
+func SetLogger(logger *logrus.Logger) {
+	Logger = logger
 }
