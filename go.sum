@@ -170,6 +170,8 @@ github.com/livegoplayer/go_helper v0.0.0-20200629061256-7c48ccb9f7bc h1:Ox83JfYo
 github.com/livegoplayer/go_helper v0.0.0-20200629061256-7c48ccb9f7bc/go.mod h1:wcJ6ow/Wic2tHqZKEx47l9cBqOo+NiLWY4I57LEJ18A=
 github.com/livegoplayer/go_helper v1.0.32 h1:Xl1oMQee1hNjvVN/lt4/pAdG8P9sBAsARwdurjcTHIU=
 github.com/livegoplayer/go_helper v1.0.32/go.mod h1:LGRakEGtvEiNzEl29mNVsr2U0Is9v+x2bvru75WUazk=
+github.com/livegoplayer/go_helper v1.0.36 h1:kh+Yhgqz3DEOGGkzUB/LIUG8IalR4ZmFqVGX4wdyv1I=
+github.com/livegoplayer/go_helper v1.0.36/go.mod h1:LGRakEGtvEiNzEl29mNVsr2U0Is9v+x2bvru75WUazk=
 github.com/magiconair/properties v1.8.1 h1:ZC2Vc7/ZFkGmsVC9KvOjumD+G5lXy2RtTKyzRKO2BQ4=
 github.com/magiconair/properties v1.8.1/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/mattn/go-colorable v0.0.9/go.mod h1:9vuHe8Xs5qXnSaW/c/ABM9alt+Vo+STaOChaDxuIBZU=

@@ -67,7 +67,9 @@ func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
 	err = nil
 
 	//解析出level_no
-	levelNo := myHelper.GetJsonVal(p, "levelNo")
+	str := myHelper.BytesToString(p)
+	message := myHelper.GetSubStringBetween(str, "msg=", "\n")
+	level := myHelper.GetSubStringBetween(str, "level=", " ")
 
 	//开启事务
 	tx, err := mw.DbConnection.Begin()
@@ -84,7 +86,7 @@ func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
 	}
 
 	//将参数传递到sql语句中并且执行
-	_, err = stmt.Exec(p, levelNo)
+	_, err = stmt.Exec(message, level)
 	if err != nil {
 		fmt.Println("Exec failed")
 		return
