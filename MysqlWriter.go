@@ -12,10 +12,14 @@ import (
 //手动实现一个mysql_writer,作为输出流对象传递到log
 type MysqlWriter struct {
 	DbConnection *sql.DB
+	host         string
+	port         string
+	dbName       string
+	tableName    string
 }
 
 //设计mongo日志表存储格式
-func GetMysqlWriter(host string, port string, dbName string) *MysqlWriter {
+func GetMysqlWriter(host string, port string, dbName string, tableName string, username string, password string) *MysqlWriter {
 	if host == "" {
 		host = "127.0.0.1"
 	}
@@ -24,10 +28,23 @@ func GetMysqlWriter(host string, port string, dbName string) *MysqlWriter {
 		port = "3306"
 	}
 
-	mw := &MysqlWriter{}
+	if tableName == "" {
+		tableName = "us_app_log"
+	}
+
+	if username == "" {
+		username = "root"
+	}
+
+	mw := &MysqlWriter{
+		host:      host,
+		port:      port,
+		dbName:    dbName,
+		tableName: tableName,
+	}
 
 	var err error
-	mw.DbConnection, err = sql.Open("mysql", "myuser:myuser@tcp("+host+":"+port+")/"+dbName)
+	mw.DbConnection, err = sql.Open("mysql", username+":"+password+"@tcp("+host+":"+port+")/"+dbName)
 	if err != nil {
 		fmt.Printf("err:" + err.Error())
 	}
@@ -60,16 +77,16 @@ func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
 	}
 
 	//准备sql语句
-	stmt, err := tx.Prepare("INSERT INTO `us_log` (`message`, `level`) VALUES (?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO `" + mw.tableName + "` (`message`, `level`) VALUES (?, ?)")
 	if err != nil {
-		fmt.Println("Prepare fail")
+		fmt.Println("Prepare failed")
 		return
 	}
 
 	//将参数传递到sql语句中并且执行
 	_, err = stmt.Exec(p, levelNo)
 	if err != nil {
-		fmt.Println("Exec fail")
+		fmt.Println("Exec failed")
 		return
 	}
 
@@ -77,7 +94,7 @@ func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
 	err = tx.Commit()
 	//获得上一个插入自增的id
 	if err != nil {
-		fmt.Println("commit fail")
+		fmt.Println("commit failed")
 		return
 	}
 
