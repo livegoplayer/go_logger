@@ -24,9 +24,21 @@ func GetGinAccessFileLogger(logPath string, accessLogFileName string) gin.Handle
 		}
 	}
 
-	accessLogFile, err := os.OpenFile(logPath+"/"+accessLogFileName, os.O_WRONLY|os.O_APPEND|os.O_CREATE, os.ModeAppend)
+	if !myhelper.Exists(myhelper.PathToCommon(logPath + "/" + accessLogFileName)) {
+		file, err := os.Create(logPath + "/" + accessLogFileName)
+		if err != nil {
+			panic("创建日志文件失败")
+		}
+		err = os.Chmod(logPath+"/"+accessLogFileName, 0777)
+		if err != nil {
+			panic("修改文件权限失败")
+		}
+		file.Close()
+	}
+
+	accessLogFile, err := os.OpenFile(logPath+"/"+accessLogFileName, os.O_RDWR|os.O_APPEND|os.O_CREATE, os.ModeAppend)
 	if err != nil {
-		panic("打开日志文件失败")
+		panic("打开日志文件失败" + err.Error())
 	}
 
 	return gin.LoggerWithConfig(gin.LoggerConfig{
