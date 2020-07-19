@@ -15,12 +15,19 @@ type MysqlWriter struct {
 }
 
 //设计mongo日志表存储格式
+func GetMysqlWriter(host string, port string, dbName string) *MysqlWriter {
+	if host == "" {
+		host = "127.0.0.1"
+	}
 
-var mw *MysqlWriter = &MysqlWriter{}
+	if port == "" {
+		port = "3306"
+	}
 
-func init() {
+	mw := &MysqlWriter{}
+
 	var err error
-	mw.DbConnection, err = sql.Open("mysql", "myuser:myuser@tcp(139.224.132.234:3306)/file_store")
+	mw.DbConnection, err = sql.Open("mysql", "myuser:myuser@tcp("+host+":"+port+")/"+dbName)
 	if err != nil {
 		fmt.Printf("err:" + err.Error())
 	}
@@ -31,9 +38,11 @@ func init() {
 	//验证连接
 	if err := mw.DbConnection.Ping(); err != nil {
 		fmt.Println("open database fail")
-		return
+		return nil
 	}
-	fmt.Println("connnect success")
+	fmt.Println("connect success")
+
+	return mw
 }
 
 func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
@@ -51,7 +60,7 @@ func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
 	}
 
 	//准备sql语句
-	stmt, err := tx.Prepare("INSERT INTO `fs_log` (`message`, `level`) VALUES (?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO `us_log` (`message`, `level`) VALUES (?, ?)")
 	if err != nil {
 		fmt.Println("Prepare fail")
 		return
