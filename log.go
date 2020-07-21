@@ -7,38 +7,38 @@ import (
 var Logger *logrus.Logger
 
 //主动log的一些方法
-func Panic(message string) {
+func Panic(message ...interface{}) {
 	Logger = GetLogger()
-	Logger.Panicf(message)
+	Logger.Panic(message)
 }
 
-func Fatal(message string) {
+func Fatal(message ...interface{}) {
 	Logger = GetLogger()
 	Logger.Fatal(message)
 }
 
-func Error(message string) {
+func Error(message ...interface{}) {
 	Logger = GetLogger()
 	Logger.Error(message)
 
 }
 
-func Warning(message string) {
+func Warning(message ...interface{}) {
 	Logger = GetLogger()
 	Logger.Warn(message)
 }
 
-func Info(message string) {
+func Info(message ...interface{}) {
 	Logger = GetLogger()
 	Logger.Info(message)
 }
 
-func Debug(message string) {
+func Debug(message ...interface{}) {
 	Logger = GetLogger()
 	Logger.Debug(message)
 }
 
-func Trace(message string) {
+func Trace(message ...interface{}) {
 	Logger = GetLogger()
 	Logger.Trace(Logger)
 }
