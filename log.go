@@ -1,6 +1,9 @@
 package logger
 
 import (
+	"runtime"
+	"strconv"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -9,38 +12,43 @@ var Logger *logrus.Logger
 //主动log的一些方法
 func Panic(message ...interface{}) {
 	Logger = GetLogger()
-	Logger.Panic(message)
+	Logger.Panic(getFileLine(), message)
+}
+
+func getFileLine() string {
+	_, file, line, _ := runtime.Caller(1)
+	return file + " : " + strconv.Itoa(line) + " "
 }
 
 func Fatal(message ...interface{}) {
 	Logger = GetLogger()
-	Logger.Fatal(message)
+	Logger.Fatal(getFileLine(), message)
 }
 
 func Error(message ...interface{}) {
 	Logger = GetLogger()
-	Logger.Error(message)
+	Logger.Error(getFileLine(), message)
 
 }
 
 func Warning(message ...interface{}) {
 	Logger = GetLogger()
-	Logger.Warn(message)
+	Logger.Warn(getFileLine(), message)
 }
 
 func Info(message ...interface{}) {
 	Logger = GetLogger()
-	Logger.Info(message)
+	Logger.Info(getFileLine(), message)
 }
 
 func Debug(message ...interface{}) {
 	Logger = GetLogger()
-	Logger.Debug(message)
+	Logger.Debug(getFileLine(), message)
 }
 
 func Trace(message ...interface{}) {
 	Logger = GetLogger()
-	Logger.Trace(Logger)
+	Logger.Trace(getFileLine(), Logger)
 }
 
 func GetLogger() *logrus.Logger {
