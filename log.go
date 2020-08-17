@@ -16,7 +16,7 @@ func Panic(message ...interface{}) {
 }
 
 func getFileLine() string {
-	_, file, line, _ := runtime.Caller(1)
+	_, file, line, _ := runtime.Caller(2)
 	return file + " : " + strconv.Itoa(line) + " "
 }
 
