@@ -3,6 +3,7 @@ package logger
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 
@@ -68,8 +69,14 @@ func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
 
 	//解析出level_no
 	str := myHelper.BytesToString(p)
-	message := myHelper.GetSubStringBetween(str, "msg=", "\n")
+	message := myHelper.GetSubStringBetween(str, `msg="`, `"`)
 	level := myHelper.GetSubStringBetween(str, "level=", " ")
+	t := myHelper.GetSubStringBetween(str, `time="`, `" `)
+
+	ti, err := time.Parse(time.RFC3339, t)
+	if err != nil {
+		panic(err)
+	}
 
 	//开启事务
 	tx, err := mw.DbConnection.Begin()
@@ -79,14 +86,14 @@ func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
 	}
 
 	//准备sql语句
-	stmt, err := tx.Prepare("INSERT INTO `" + mw.tableName + "` (`message`, `level`) VALUES (?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO `" + mw.tableName + "` (`message`, `level`, `add_datetime`) VALUES (?, ?, ?)")
 	if err != nil {
 		fmt.Println("Prepare failed")
 		return
 	}
 
 	//将参数传递到sql语句中并且执行
-	_, err = stmt.Exec(message, level)
+	_, err = stmt.Exec(message, level, ti)
 	if err != nil {
 		fmt.Println("Exec failed")
 		return
