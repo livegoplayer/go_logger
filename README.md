@@ -1,1 +1,19 @@
-请切换到最新的tag
+使用logrus作为核心，定制了各种帮助函数用来指定特定的输出对象
+
+目的是定制app_log 以及access_log 的输出格式和输出对象
+
+目前定制了out对象，支持输出到mysql、rabbitmq、控制台以及文件
+
+你可以使用下面任意一个函数初始化你的输出对象：
+
+GetRabbitMqLogger
+
+GetMysqlLogger
+
+GetConsoleLogger
+
+GetFileLogger
+
+然后使用SetLogger方法设置当前的输出对象
+
+最后使用本包中log文件中的各种方法来打印log即可
