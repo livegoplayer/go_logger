@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"strings"
 
-	myHelper "github.com/livegoplayer/go_helper"
 	mqHelper "github.com/livegoplayer/go_mq_helper/rabbitmq"
 	"github.com/sirupsen/logrus"
 )
@@ -48,10 +47,10 @@ func (rw *RabbitmqWriter) Write(p []byte) (n int, err error) {
 	err = nil
 
 	//解析出level_no
-	str := myHelper.BytesToString(p)
-	level := myHelper.GetSubStringBetween(str, "level=", " ")
-	msg := strings.Trim(strings.Trim(myHelper.GetSubStringBetween(str, "msg=", ""), "\""), "\"\n")
-	time := strings.Trim(myHelper.GetSubStringBetween(str, "time=", " "), "\"")
+	str := string(p)
+	level := GetSubStringBetween(str, "level=", " ")
+	msg := strings.Trim(strings.Trim(GetSubStringBetween(str, "msg=", ""), "\""), "\"\n")
+	time := strings.Trim(GetSubStringBetween(str, "time=", " "), "\"")
 
 	message := time + " " + msg
 

@@ -3,11 +3,10 @@ package logger
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-
-	myHelper "github.com/livegoplayer/go_helper"
 )
 
 //手动实现一个mysql_writer,作为输出流对象传递到log
@@ -68,10 +67,10 @@ func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
 	err = nil
 
 	//解析出level_no
-	str := myHelper.BytesToString(p)
-	message := myHelper.GetSubStringBetween(str, `msg="`, `"`)
-	level := myHelper.GetSubStringBetween(str, "level=", " ")
-	t := myHelper.GetSubStringBetween(str, `time="`, `" `)
+	str := p[:]
+	message := GetSubStringBetween(string(str), `msg="`, `"`)
+	level := GetSubStringBetween(string(str), "level=", " ")
+	t := GetSubStringBetween(string(str), `time="`, `" `)
 
 	ti, err := time.Parse(time.RFC3339, t)
 	if err != nil {
@@ -108,4 +107,12 @@ func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
 	}
 
 	return len(p), nil
+}
+
+func Substring(str string, startIndex int64, endIndex int64) string {
+	return str[startIndex:endIndex]
+}
+
+func GetSubStringBetween(str string, begin string, end string) string {
+	return Substring(str, int64(strings.Index(str, begin)), int64(strings.Index(str, end)))
 }

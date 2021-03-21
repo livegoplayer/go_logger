@@ -3,10 +3,10 @@ package logger
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
-	myhelper "github.com/livegoplayer/go_helper"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 )
@@ -28,7 +28,7 @@ func GetFileLogger(path string) *logrus.Logger {
 	errorWriter, err := rotatelogs.New(
 		path+"/error_%Y%m%d%H%M.log.",
 		//每次从这个位置清除分离日志
-		rotatelogs.WithLinkName(myhelper.PathToCommon(path+"/error.log")),
+		rotatelogs.WithLinkName(filepath.FromSlash(path+"/error.log")),
 		//每30天清除一次日志
 		rotatelogs.WithMaxAge(30*24*time.Hour),
 		//每一个小时分离一次日志文件
