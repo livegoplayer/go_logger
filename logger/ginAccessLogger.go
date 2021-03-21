@@ -1,13 +1,8 @@
 package logger
 
 import (
-	"fmt"
-	jsoniter "github.com/json-iterator/go"
-	"os"
-	"path"
-	"path/filepath"
-
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 //获取gin专用的access log文件输入
@@ -77,36 +72,4 @@ func MyGinLoggerFormatter(params gin.LogFormatterParams) string {
 	}
 
 	return JsonEncode(accessLogBody)
-}
-
-//用来存储文件目录相关帮助函数
-//转换目录分隔符为对应系统的
-func PathToCommon(str string) string {
-	return filepath.FromSlash(str)
-}
-
-// 判断所给路径文件/文件夹是否存在
-func Exists(path string) bool {
-	_, err := os.Stat(path) //os.Stat获取文件信息
-	if err != nil {
-		if os.IsExist(err) {
-			return true
-		}
-		return false
-	}
-	return true
-}
-
-func GetFileExtName(str string) string {
-	fileSuffix := path.Ext(str)
-	return fileSuffix
-}
-
-func JsonEncode(data interface{}) string {
-	var json = jsoniter.ConfigCompatibleWithStandardLibrary
-	jsonByte, err := json.Marshal(&data)
-	if err != nil {
-		fmt.Printf("json加密出错:" + err.Error())
-	}
-	return string(jsonByte[:])
 }

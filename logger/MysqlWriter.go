@@ -3,7 +3,6 @@ package logger
 import (
 	"database/sql"
 	"fmt"
-	"strings"
 	"time"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -107,12 +106,4 @@ func (mw *MysqlWriter) Write(p []byte) (n int, err error) {
 	}
 
 	return len(p), nil
-}
-
-func Substring(str string, startIndex int64, endIndex int64) string {
-	return str[startIndex:endIndex]
-}
-
-func GetSubStringBetween(str string, begin string, end string) string {
-	return Substring(str, int64(strings.Index(str, begin)), int64(strings.Index(str, end)))
 }
