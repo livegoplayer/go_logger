@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"os"
 	"runtime"
 	"strconv"
 
@@ -53,7 +54,10 @@ func Trace(message ...interface{}) {
 
 func GetLogger() *logrus.Logger {
 	if Logger == nil {
-		return logrus.New()
+		Logger = logrus.New()
+		Logger.SetFormatter(&logrus.TextFormatter{})
+		Logger.SetOutput(os.Stdout)
+		Logger.SetLevel(logrus.TraceLevel)
 	}
 
 	return Logger
