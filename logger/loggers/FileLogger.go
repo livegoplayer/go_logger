@@ -1,4 +1,6 @@
-package logger
+package loggers
+
+// 这个文件已经废弃， 保留下来看看怎么加hook
 
 import (
 	"fmt"
@@ -26,7 +28,7 @@ func GetFileLogger(path string) *logrus.Logger {
 
 	//设置对某个地方的日志进行分割
 	errorWriter, err := rotatelogs.New(
-		path+"/error_%Y%m%d%H%M.log.",
+		filepath.Join(path, "error_%Y%m%d%H%M.log"),
 		//每次从这个位置清除分离日志
 		rotatelogs.WithLinkName(filepath.FromSlash(path+"/error.log")),
 		//每30天清除一次日志
@@ -42,7 +44,7 @@ func GetFileLogger(path string) *logrus.Logger {
 
 	//设置对某个地方的日志进行分割
 	debugWriter, err := rotatelogs.New(
-		path+"/access_%Y%m%d%H%M.log",
+		filepath.Join(path, "access_%Y%m%d%H%M.log"),
 		//每次从这个位置清除分离日志
 		rotatelogs.WithLinkName(path+"/access.log"),
 		//每30天清除一次日志
@@ -57,8 +59,8 @@ func GetFileLogger(path string) *logrus.Logger {
 	}
 
 	lfHook := lfshook.NewHook(lfshook.WriterMap{
-		logrus.TraceLevel: os.Stdin, // 为不同级别设置不同的输出目的,这些都是ioWriter
-		logrus.DebugLevel: os.Stdin, // 为不同级别设置不同的输出目的,这些都是ioWriter
+		logrus.TraceLevel: os.Stdout, // 为不同级别设置不同的输出目的,这些都是ioWriter
+		logrus.DebugLevel: os.Stdout, // 为不同级别设置不同的输出目的,这些都是ioWriter
 		logrus.InfoLevel:  debugWriter,
 		logrus.WarnLevel:  debugWriter,
 		logrus.ErrorLevel: errorWriter,
@@ -67,6 +69,7 @@ func GetFileLogger(path string) *logrus.Logger {
 	}, &logrus.TextFormatter{})
 
 	fileLogger = logrus.New()
+	fileLogger.SetLevel(logrus.TraceLevel)
 	fileLogger.AddHook(lfHook)
 
 	return fileLogger

@@ -1,43 +1,19 @@
-package logger
+package loggers
 
 import (
 	"github.com/gin-gonic/gin"
-	"os"
+	"github.com/livegoplayer/go_logger/logger/writer"
+	"github.com/sirupsen/logrus"
+	"time"
 )
 
 //获取gin专用的access log文件输入
 func GetGinAccessFileLogger(logPath string, accessLogFileName string) gin.HandlerFunc {
 	if logPath == "" {
-		logPath = "../log"
+		logPath = "../access_log"
 	}
 
-	if accessLogFileName == "" {
-		accessLogFileName = "access.log"
-	}
-
-	if !Exists(PathToCommon(logPath)) {
-		err := os.MkdirAll(logPath, os.ModeDir)
-		if err != nil {
-			panic("创建日志文件目录失败")
-		}
-	}
-
-	if !Exists(PathToCommon(logPath + "/" + accessLogFileName)) {
-		file, err := os.Create(logPath + "/" + accessLogFileName)
-		if err != nil {
-			panic("创建日志文件失败")
-		}
-		err = os.Chmod(logPath+"/"+accessLogFileName, 0777)
-		if err != nil {
-			panic("修改文件权限失败")
-		}
-		file.Close()
-	}
-
-	accessLogFile, err := os.OpenFile(logPath+"/"+accessLogFileName, os.O_RDWR|os.O_APPEND|os.O_CREATE, os.ModeAppend)
-	if err != nil {
-		panic("打开日志文件失败" + err.Error())
-	}
+	accessLogFile := writer.GetFileWriter(logPath, logrus.InfoLevel, time.Hour*24*60, time.Hour*24)
 
 	return gin.LoggerWithConfig(gin.LoggerConfig{
 		Formatter: MyGinLoggerFormatter, Output: accessLogFile,
@@ -71,5 +47,5 @@ func MyGinLoggerFormatter(params gin.LogFormatterParams) string {
 		ClientIP:      params.ClientIP,
 	}
 
-	return JsonEncode(accessLogBody)
+	return writer.JsonEncode(accessLogBody)
 }

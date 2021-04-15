@@ -1,19 +1,11 @@
-package logger
+package writer
 
 import (
 	"fmt"
 	jsoniter "github.com/json-iterator/go"
 	"os"
-	"path"
-	"path/filepath"
 	"strings"
 )
-
-//用来存储文件目录相关帮助函数
-//转换目录分隔符为对应系统的
-func PathToCommon(str string) string {
-	return filepath.FromSlash(str)
-}
 
 // 判断所给路径文件/文件夹是否存在
 func Exists(path string) bool {
@@ -25,11 +17,6 @@ func Exists(path string) bool {
 		return false
 	}
 	return true
-}
-
-func GetFileExtName(str string) string {
-	fileSuffix := path.Ext(str)
-	return fileSuffix
 }
 
 func JsonEncode(data interface{}) string {

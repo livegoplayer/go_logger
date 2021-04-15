@@ -1,8 +1,9 @@
-package logger
+package writer
 
 import (
 	"database/sql"
 	"fmt"
+	"github.com/go-sql-driver/mysql"
 	"time"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -43,16 +44,27 @@ func GetMysqlWriter(host string, port string, dbName string, tableName string, u
 	}
 
 	var err error
-	mw.DbConnection, err = sql.Open("mysql", username+":"+password+"@tcp("+host+":"+port+")/"+dbName)
+	//初始化全局sql连接
+	mcfg := &mysql.Config{
+		User:                 username,
+		Passwd:               password,
+		Addr:                 host + ":" + port,
+		Collation:            "",
+		Net:                  "tcp",
+		AllowNativePasswords: true,
+		DBName:               dbName,
+	}
+	mw.DbConnection, err = sql.Open("mysql", mcfg.FormatDSN())
 	if err != nil {
 		fmt.Printf("err:" + err.Error())
+		return nil
 	}
 	//设置数据库最大连接数
 	mw.DbConnection.SetConnMaxLifetime(100)
 	//设置上数据库最大闲置连接数
 	mw.DbConnection.SetMaxIdleConns(10)
 	//验证连接
-	if err := mw.DbConnection.Ping(); err != nil {
+	if err = mw.DbConnection.Ping(); err != nil {
 		fmt.Println("open database fail")
 		return nil
 	}

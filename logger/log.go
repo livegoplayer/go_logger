@@ -1,19 +1,20 @@
 package logger
 
 import (
-	"os"
 	"runtime"
 	"strconv"
 
 	"github.com/sirupsen/logrus"
 )
 
-var Logger *logrus.Logger
+// 初始化日志
+var LoggerMap map[logrus.Level]*logrus.Logger
 
 //主动log的一些方法
 func Panic(message ...interface{}) {
-	Logger = GetLogger()
-	Logger.Panic(getFileLine(), message)
+	level := logrus.PanicLevel
+	logger := GetLoggerByLevel(level)
+	logger.Panic(getFileLine(), message)
 }
 
 func getFileLine() string {
@@ -22,48 +23,66 @@ func getFileLine() string {
 }
 
 func Fatal(message ...interface{}) {
-	Logger = GetLogger()
-	Logger.Fatal(getFileLine(), message)
+	level := logrus.PanicLevel
+	logger := GetLoggerByLevel(level)
+	logger.Fatal(getFileLine(), message)
 }
 
 func Error(message ...interface{}) {
-	Logger = GetLogger()
-	Logger.Error(getFileLine(), message)
-
+	level := logrus.PanicLevel
+	logger := GetLoggerByLevel(level)
+	logger.Error(getFileLine(), message)
 }
 
 func Warning(message ...interface{}) {
-	Logger = GetLogger()
-	Logger.Warn(getFileLine(), message)
+	level := logrus.PanicLevel
+	logger := GetLoggerByLevel(level)
+	logger.Warning(getFileLine(), message)
 }
 
 func Info(message ...interface{}) {
-	Logger = GetLogger()
-	Logger.Info(getFileLine(), message)
+	level := logrus.PanicLevel
+	logger := GetLoggerByLevel(level)
+	logger.Info(getFileLine(), message)
 }
 
 func Debug(message ...interface{}) {
-	Logger = GetLogger()
-	Logger.Debug(getFileLine(), message)
+	level := logrus.PanicLevel
+	logger := GetLoggerByLevel(level)
+	logger.Debug(getFileLine(), message)
 }
 
 func Trace(message ...interface{}) {
-	Logger = GetLogger()
-	Logger.Trace(getFileLine(), Logger)
+	level := logrus.PanicLevel
+	logger := GetLoggerByLevel(level)
+	logger.Trace(getFileLine(), message)
 }
 
-func GetLogger() *logrus.Logger {
-	if Logger == nil {
-		Logger = logrus.New()
-		Logger.SetFormatter(&logrus.TextFormatter{})
-		Logger.SetOutput(os.Stdout)
-		Logger.SetLevel(logrus.TraceLevel)
+func SetLogger(level logrus.Level, logger *logrus.Logger) {
+	if _, ok := LoggerMap[level]; ok {
+		text, _ := level.MarshalText()
+		panic(string(text) + "等级的日志已经设置完毕，请不要重复设置")
 	}
 
-	return Logger
+	LoggerMap[level] = logger
 }
 
-//设置默认的logger
-func SetLogger(logger *logrus.Logger) {
-	Logger = logger
+func GetLoggerByLevel(level logrus.Level) *logrus.Logger {
+	if m, ok := LoggerMap[level]; ok {
+		return m
+	} else {
+		text, _ := level.MarshalText()
+		panic(string(text) + "等级的日志尚未设置，请调用SetLogger方法设置")
+	}
+	return nil
+}
+
+func GetGinAccessLogger(level logrus.Level) *logrus.Logger {
+	if m, ok := LoggerMap[level]; ok {
+		return m
+	} else {
+		text, _ := level.MarshalText()
+		panic(string(text) + "等级的日志尚未设置，请调用SetLogger方法设置")
+	}
+	return nil
 }
