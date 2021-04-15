@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/livegoplayer/go_logger/logger/writer"
 	"github.com/sirupsen/logrus"
+	"os"
 	"time"
 )
 
@@ -48,4 +49,12 @@ func MyGinLoggerFormatter(params gin.LogFormatterParams) string {
 	}
 
 	return writer.JsonEncode(accessLogBody)
+}
+
+func GetDebugLogger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		gin.LoggerWithConfig(gin.LoggerConfig{
+			Formatter: MyGinLoggerFormatter, Output: os.Stdout,
+		})(c)
+	}
 }
