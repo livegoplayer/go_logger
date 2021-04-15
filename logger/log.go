@@ -1,8 +1,12 @@
 package logger
 
 import (
+	"github.com/livegoplayer/go_logger/logger/writer"
+	"github.com/rifflock/lfshook"
+	"os"
 	"runtime"
 	"strconv"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -85,4 +89,58 @@ func GetGinAccessLogger(level logrus.Level) *logrus.Logger {
 		panic(string(text) + "等级的日志尚未设置，请调用SetLogger方法设置")
 	}
 	return nil
+}
+
+var levelList = []logrus.Level{
+	logrus.TraceLevel,
+	logrus.DebugLevel,
+	logrus.InfoLevel,
+	logrus.WarnLevel,
+	logrus.ErrorLevel,
+	logrus.FatalLevel,
+	logrus.PanicLevel,
+}
+
+// 初始化所有log为filelog
+func InitBaseFileLogByPath(path string, cleanTime time.Duration, splitTime time.Duration) {
+	for _, level := range levelList {
+		appLogger := logrus.New()
+		appLogger.Out = writer.GetFileWriter(path, level, cleanTime, splitTime)
+		SetLogger(level, appLogger)
+	}
+}
+
+// 初始化所有log为mysqllog
+func InitBaseMysqlLogByConfig(host string, port string, dbName string, tableName string, username string, password string) {
+	for _, level := range levelList {
+		appLogger := logrus.New()
+		appLogger.Out = writer.GetMysqlWriter(host, port, dbName, tableName, username, password)
+		SetLogger(level, appLogger)
+	}
+}
+
+// 初始化所有log为rabbitmq log
+func InitBaseRabbitmqLogByConfig(url string, routerKey string, exchange string, appType int) {
+	for _, level := range levelList {
+		appLogger := logrus.New()
+		appLogger.Out = writer.GetRabbitmqWriter(url, routerKey, exchange, appType)
+		SetLogger(level, appLogger)
+	}
+}
+
+// 为debug模式增加控制台输出
+func AddDebugLogHook() {
+	lfHook := lfshook.NewHook(lfshook.WriterMap{
+		logrus.TraceLevel: os.Stdout, // 为不同级别设置不同的输出目的,这些都是ioWriter
+		logrus.DebugLevel: os.Stdout, // 为不同级别设置不同的输出目的,这些都是ioWriter
+		logrus.InfoLevel:  os.Stdout,
+		logrus.WarnLevel:  os.Stdout,
+		logrus.ErrorLevel: os.Stdout,
+		logrus.FatalLevel: os.Stdout,
+		logrus.PanicLevel: os.Stdout,
+	}, &logrus.TextFormatter{})
+	for _, level := range levelList {
+		l := GetLoggerByLevel(level)
+		l.AddHook(lfHook)
+	}
 }
