@@ -144,3 +144,7 @@ func AddDebugLogHook() {
 		l.AddHook(lfHook)
 	}
 }
+
+func init() {
+	LoggerMap = make(map[logrus.Level]*logrus.Logger, 0)
+}
