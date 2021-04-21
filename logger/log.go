@@ -154,7 +154,7 @@ func init() {
 }
 
 func CheckStack(level logrus.Level) string {
-	if level < logrus.ErrorLevel {
+	if level >= logrus.ErrorLevel {
 		return string(debug.Stack())
 	}
 	return ""
