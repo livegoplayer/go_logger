@@ -134,7 +134,14 @@ func InitBaseRabbitmqLogByConfig(url string, routerKey string, exchange string, 
 
 // 为debug模式增加控制台输出
 func AddDebugLogHook() {
-	lfHook := lfshook.NewHook(lfshook.WriterMap{
+	for _, level := range levelList {
+		l := GetLoggerByLevel(level)
+		l.AddHook(GetDebugHook())
+	}
+}
+
+func GetDebugHook() *lfshook.LfsHook {
+	return lfshook.NewHook(lfshook.WriterMap{
 		logrus.TraceLevel: os.Stdout, // 为不同级别设置不同的输出目的,这些都是ioWriter
 		logrus.DebugLevel: os.Stdout, // 为不同级别设置不同的输出目的,这些都是ioWriter
 		logrus.InfoLevel:  os.Stdout,
@@ -143,10 +150,6 @@ func AddDebugLogHook() {
 		logrus.FatalLevel: os.Stdout,
 		logrus.PanicLevel: os.Stdout,
 	}, &logrus.TextFormatter{})
-	for _, level := range levelList {
-		l := GetLoggerByLevel(level)
-		l.AddHook(lfHook)
-	}
 }
 
 func init() {
