@@ -106,6 +106,7 @@ func InitBaseFileLogByPath(path string, cleanTime time.Duration, splitTime time.
 	for _, level := range levelList {
 		appLogger := logrus.New()
 		appLogger.Out = writer.GetFileWriter(path, level, cleanTime, splitTime)
+		appLogger.Formatter = &logrus.JSONFormatter{}
 		SetLogger(level, appLogger)
 	}
 }
@@ -115,6 +116,7 @@ func InitBaseMysqlLogByConfig(host string, port string, dbName string, tableName
 	for _, level := range levelList {
 		appLogger := logrus.New()
 		appLogger.Out = writer.GetMysqlWriter(host, port, dbName, tableName, username, password)
+		appLogger.Formatter = &logrus.JSONFormatter{}
 		SetLogger(level, appLogger)
 	}
 }
@@ -124,6 +126,7 @@ func InitBaseRabbitmqLogByConfig(url string, routerKey string, exchange string, 
 	for _, level := range levelList {
 		appLogger := logrus.New()
 		appLogger.Out = writer.GetRabbitmqWriter(url, routerKey, exchange, appType)
+		appLogger.Formatter = &logrus.JSONFormatter{}
 		SetLogger(level, appLogger)
 	}
 }
