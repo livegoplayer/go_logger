@@ -5,6 +5,7 @@ import (
 	"github.com/rifflock/lfshook"
 	"os"
 	"runtime"
+	"runtime/debug"
 	"strconv"
 	"time"
 
@@ -18,7 +19,7 @@ var LoggerMap map[logrus.Level]*logrus.Logger
 func Panic(message ...interface{}) {
 	level := logrus.PanicLevel
 	logger := GetLoggerByLevel(level)
-	logger.Panic(getFileLine(), message)
+	logger.Panic(getFileLine(), message, CheckStack(level))
 }
 
 func getFileLine() string {
@@ -29,37 +30,37 @@ func getFileLine() string {
 func Fatal(message ...interface{}) {
 	level := logrus.FatalLevel
 	logger := GetLoggerByLevel(level)
-	logger.Fatal(getFileLine(), message)
+	logger.Fatal(getFileLine(), message, CheckStack(level))
 }
 
 func Error(message ...interface{}) {
 	level := logrus.ErrorLevel
 	logger := GetLoggerByLevel(level)
-	logger.Error(getFileLine(), message)
+	logger.Error(getFileLine(), message, CheckStack(level))
 }
 
 func Warning(message ...interface{}) {
 	level := logrus.WarnLevel
 	logger := GetLoggerByLevel(level)
-	logger.Warning(getFileLine(), message)
+	logger.Warning(getFileLine(), message, CheckStack(level))
 }
 
 func Info(message ...interface{}) {
 	level := logrus.InfoLevel
 	logger := GetLoggerByLevel(level)
-	logger.Info(getFileLine(), message)
+	logger.Info(getFileLine(), message, CheckStack(level))
 }
 
 func Debug(message ...interface{}) {
 	level := logrus.DebugLevel
 	logger := GetLoggerByLevel(level)
-	logger.Debug(getFileLine(), message)
+	logger.Debug(getFileLine(), message, CheckStack(level))
 }
 
 func Trace(message ...interface{}) {
 	level := logrus.TraceLevel
 	logger := GetLoggerByLevel(level)
-	logger.Trace(getFileLine(), message)
+	logger.Trace(getFileLine(), message, CheckStack(level))
 }
 
 func SetLogger(level logrus.Level, logger *logrus.Logger) {
@@ -150,4 +151,11 @@ func AddDebugLogHook() {
 
 func init() {
 	LoggerMap = make(map[logrus.Level]*logrus.Logger, 0)
+}
+
+func CheckStack(level logrus.Level) string {
+	if level < logrus.ErrorLevel {
+		return string(debug.Stack())
+	}
+	return ""
 }
