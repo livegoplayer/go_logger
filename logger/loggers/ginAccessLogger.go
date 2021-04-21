@@ -48,7 +48,7 @@ func MyGinLoggerFormatter(params gin.LogFormatterParams) string {
 		ClientIP:      params.ClientIP,
 	}
 
-	return writer.JsonEncode(accessLogBody)
+	return writer.JsonEncode(accessLogBody) + "\n"
 }
 
 func GetDebugLogger() gin.HandlerFunc {
