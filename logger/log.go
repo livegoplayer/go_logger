@@ -27,37 +27,37 @@ func getFileLine() string {
 }
 
 func Fatal(message ...interface{}) {
-	level := logrus.PanicLevel
+	level := logrus.FatalLevel
 	logger := GetLoggerByLevel(level)
 	logger.Fatal(getFileLine(), message)
 }
 
 func Error(message ...interface{}) {
-	level := logrus.PanicLevel
+	level := logrus.ErrorLevel
 	logger := GetLoggerByLevel(level)
 	logger.Error(getFileLine(), message)
 }
 
 func Warning(message ...interface{}) {
-	level := logrus.PanicLevel
+	level := logrus.WarnLevel
 	logger := GetLoggerByLevel(level)
 	logger.Warning(getFileLine(), message)
 }
 
 func Info(message ...interface{}) {
-	level := logrus.PanicLevel
+	level := logrus.InfoLevel
 	logger := GetLoggerByLevel(level)
 	logger.Info(getFileLine(), message)
 }
 
 func Debug(message ...interface{}) {
-	level := logrus.PanicLevel
+	level := logrus.DebugLevel
 	logger := GetLoggerByLevel(level)
 	logger.Debug(getFileLine(), message)
 }
 
 func Trace(message ...interface{}) {
-	level := logrus.PanicLevel
+	level := logrus.TraceLevel
 	logger := GetLoggerByLevel(level)
 	logger.Trace(getFileLine(), message)
 }
