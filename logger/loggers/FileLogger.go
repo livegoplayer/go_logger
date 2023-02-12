@@ -13,10 +13,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//文件log单例
+// 文件log单例
 var fileLogger *logrus.Logger
 
-//完全日志输出的模式
+// 完全日志输出的模式
 func GetFileLogger(path string) *logrus.Logger {
 	if fileLogger != nil {
 		return fileLogger
